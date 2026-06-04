@@ -11,12 +11,12 @@ html,body{background:#0e0e0c;width:100vw;height:100dvh;overflow:hidden;}
 .nav{position:fixed;top:14px;left:0;right:0;display:flex;justify-content:center;z-index:100;pointer-events:none;}
 .logo-img{height:60px;width:auto;pointer-events:auto;cursor:pointer;transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);}
 .logo-img:hover{transform:scale(1.1);}
-.stage{position:fixed;inset:0;display:flex;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:1;}
+.stage{position:fixed;inset:0;display:flex;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:1;scroll-behavior:auto;}
 .stage::-webkit-scrollbar{display:none;}
 .slide{min-width:100vw;width:100vw;height:100dvh;flex-shrink:0;scroll-snap-align:start;background-size:cover;background-position:center;position:relative;}
 .slide-label{position:absolute;bottom:20px;left:14px;right:14px;}
-.slide-title{font-family:'Jost',sans-serif;font-weight:300;font-size:0.88rem;letter-spacing:0.08em;color:rgba(245,242,236,0.9);text-transform:uppercase;}
-.slide-meta{font-family:'Jost',sans-serif;font-weight:300;font-size:0.48rem;letter-spacing:0.2em;color:rgba(245,242,236,0.5);text-transform:uppercase;margin-top:0.25rem;}
+.slide-title{font-family:'Jost',sans-serif;font-weight:300;font-size:1.32rem;letter-spacing:0.08em;color:rgba(245,242,236,0.9);text-transform:uppercase;}
+.slide-meta{font-family:'Jost',sans-serif;font-weight:300;font-size:0.72rem;letter-spacing:0.2em;color:rgba(245,242,236,0.5);text-transform:uppercase;margin-top:0.25rem;}
 .pb{position:fixed;bottom:0;left:0;height:3px;z-index:200;transition:left 0.3s ease,background 0.3s ease;}
 .viewer{position:fixed;inset:0;z-index:500;background:#0e0e0c;display:none;}
 .viewer.open{display:block;}
