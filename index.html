@@ -1056,5 +1056,124 @@ document.documentElement.classList.add('fwd-ready');
   }
 })();
 </script>
+
+<script>
+/* ── MOBILE SCROLL-SNAP — touch only, desktop untouched ── */
+if('ontouchstart' in window){
+  window.addEventListener('DOMContentLoaded', function(){
+
+    var stage = document.getElementById('stage');
+    var slides = Array.from(document.querySelectorAll('.slide'));
+    var N = slides.length;
+    var viewer = document.getElementById('viewer');
+
+    if(!stage || !N) return;
+
+    /* 1. Transform stage into horizontal scroll-snap */
+    stage.style.overflowX = 'scroll';
+    stage.style.overflowY = 'hidden';
+    stage.style.scrollSnapType = 'x mandatory';
+    stage.style.webkitOverflowScrolling = 'touch';
+    stage.style.display = 'flex';
+
+    var s1 = document.createElement('style');
+    s1.textContent = '#stage::-webkit-scrollbar{display:none}#stage{scrollbar-width:none}';
+    document.head.appendChild(s1);
+
+    /* 2. Each slide = one snap point */
+    slides.forEach(function(sl){
+      sl.style.minWidth = '100vw';
+      sl.style.width = '100vw';
+      sl.style.height = '100dvh';
+      sl.style.flexShrink = '0';
+      sl.style.scrollSnapAlign = 'start';
+      sl.style.opacity = '1';
+      sl.style.transform = '';
+    });
+
+    /* 3. Jump to slide 8 on load */
+    requestAnimationFrame(function(){
+      stage.scrollLeft = 8 * window.innerWidth;
+    });
+
+    /* 4. Sync cur variable from scroll position */
+    var raf;
+    stage.addEventListener('scroll', function(){
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function(){
+        var n = Math.round(stage.scrollLeft / window.innerWidth);
+        n = Math.max(0, Math.min(N-1, n));
+        if(n !== cur){
+          slides[cur].classList.remove('active');
+          cur = n;
+          slides[cur].classList.add('active');
+          var pb = document.getElementById('pb');
+          if(pb) pb.style.left = (cur/N*100)+'%';
+        }
+      });
+    }, {passive:true});
+
+    /* 5. Tap on slide = open gallery */
+    var tx=0, ty=0;
+    stage.addEventListener('touchstart', function(e){ tx=e.touches[0].clientX; ty=e.touches[0].clientY; }, {passive:true});
+    stage.addEventListener('touchend', function(e){
+      var dx=Math.abs(e.changedTouches[0].clientX-tx);
+      var dy=Math.abs(e.changedTouches[0].clientY-ty);
+      if(dx<10 && dy<10 && galleries && galleries[cur] && galleries[cur].length>0){
+        if(typeof openViewer==='function') openViewer(cur,'');
+      }
+    }, {passive:true});
+
+    /* 6. Viewer scroll-snap */
+    if(viewer){
+      var wrap = null;
+      var origOpen = window.openViewer;
+
+      window.openViewer = function(idx, title){
+        if(origOpen) origOpen(idx, title);
+
+        if(!wrap){
+          wrap = document.createElement('div');
+          wrap.style.cssText = 'position:absolute;inset:0;display:flex;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;z-index:2;';
+          var s2 = document.createElement('style');
+          s2.textContent = '#vwrap::-webkit-scrollbar{display:none}';
+          wrap.id = 'vwrap';
+          document.head.appendChild(s2);
+          viewer.appendChild(wrap);
+        }
+
+        wrap.innerHTML = '';
+        var imgs = galleries[idx] || [];
+        imgs.forEach(function(src){
+          var item = document.createElement('div');
+          item.style.cssText = 'min-width:100vw;height:100%;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
+          var img = document.createElement('img');
+          img.src = src;
+          img.draggable = false;
+          img.style.cssText = 'max-width:100vw;max-height:100dvh;object-fit:contain;pointer-events:none;';
+          item.appendChild(img);
+          wrap.appendChild(item);
+        });
+        wrap.scrollLeft = 0;
+        gCur = 0;
+
+        wrap.addEventListener('scroll', function(){
+          gCur = Math.round(wrap.scrollLeft / window.innerWidth);
+        }, {passive:true});
+      };
+
+      /* Tap viewer = close */
+      var vtx=0, vty=0;
+      viewer.addEventListener('touchstart', function(e){ vtx=e.touches[0].clientX; vty=e.touches[0].clientY; }, {passive:true});
+      viewer.addEventListener('touchend', function(e){
+        var dx=Math.abs(e.changedTouches[0].clientX-vtx);
+        var dy=Math.abs(e.changedTouches[0].clientY-vty);
+        if(dx<10 && dy<10){ viewer.classList.remove('open'); viewerOpen=false; }
+      }, {passive:true});
+    }
+
+  });
+}
+</script>
 </body>
 </html>
