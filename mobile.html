@@ -15,7 +15,7 @@ html,body{background:#0e0e0c;width:100vw;height:100dvh;overflow:hidden;}
 .stage::-webkit-scrollbar{display:none;}
 .slide{min-width:100vw;width:100vw;height:100dvh;flex-shrink:0;scroll-snap-align:start;background-size:cover;background-position:center;position:relative;}
 .slide-meta{display:none!important;}.slide-label{position:absolute;bottom:20px;left:14px;right:14px;}
-.slide-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:5vw;letter-spacing:0;color:#f5f2ec;text-transform:none;}
+.slide-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:5vw !important;font-size:clamp(1.5rem, 5vw, 3rem) !important;letter-spacing:0;color:#f5f2ec;text-transform:none;}
 
 .pb{position:fixed;bottom:0;left:0;height:3px;z-index:200;transition:left 0.3s ease,background 0.3s ease;}
 .viewer{position:fixed;inset:0;z-index:500;background:#0e0e0c;display:none;}
@@ -141,6 +141,15 @@ viewer.addEventListener('touchend',function(e){
   var dy=Math.abs(e.changedTouches[0].clientY-vty);
   if(dx<10&&dy<10){viewer.classList.remove('open');}
 },{passive:true});
+
+// Force font size on mobile
+document.querySelectorAll('.slide-title').forEach(function(el){
+  el.style.fontSize = (window.innerWidth * 0.05) + 'px';
+  el.style.fontFamily = "'Cormorant Garamond', serif";
+  el.style.fontStyle = 'italic';
+  el.style.fontWeight = '300';
+  el.style.color = '#f5f2ec';
+});
 </script>
 </body>
 </html>
