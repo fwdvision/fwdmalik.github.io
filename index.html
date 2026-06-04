@@ -311,6 +311,33 @@ html:not(.fwd-ready) #lbl {
 
 
 </style>
+
+<style>
+@media (hover:none) and (pointer:coarse) {
+  .stage {
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    overflow: visible !important;
+    display: flex !important;
+    position: relative !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+  }
+  .slide {
+    position: relative !important;
+    min-width: 100vw !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    flex-shrink: 0 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    scroll-snap-align: start !important;
+    inset: auto !important;
+    display: block !important;
+  }
+}
+</style>
+
 </head>
 <body bgcolor="#0e0e0c" style="background:#0e0e0c;margin:0;padding:0;">
 
