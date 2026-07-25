@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="fr" style="background:#0e0e0c;">
+<head>
+<meta charset="UTF-8">
+<title>FWD</title>
+<link rel="icon" type="image/png" href="assets/logos/favicon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e0e0c">
+<style>*{margin:0;padding:0;}html,body{background:#0e0e0c!important;}
+@media (hover:none) and (pointer:coarse) {
+  .slide:not(.active) .lbl-wrap,
+  .slide:not(.active) #lbl { opacity:0!important; }
+  #lbl { transition:none!important; }
+}
+
+
+@media (hover:none) and (pointer:coarse) {
+  
+}
+
+
+</style>
+<meta charset="UTF-8">
+<title>Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--gallery-ratio:0.8;--gallery-fit:contain;}
+body{background:#0e0e0c;font-family:'Jost',sans-serif;font-weight:300;user-select:none;overflow:hidden;cursor:none;}
+
+/* ── PORTFOLIO ── */
+.stage{width:100vw;height:100vh;position:relative;cursor:none;}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 0.55s ease;pointer-events:none;}
+.slide.active{opacity:1;pointer-events:auto;}
+.slide-img{position:absolute;inset:0;background-size:cover;background-position:center;}
+.slide[data-index="6"] .slide-img{transform:scale(1.017);transform-origin:center bottom;}
+.overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 50%);pointer-events:none;}
+.footer{position:absolute;bottom:0;left:0;right:0;padding:2rem 3rem;z-index:5;}
+.footer h2{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;font-style:italic;color:#f5f2ec;}
+.nav{position:absolute;top:50px;left:0;right:0;padding:0;display:flex;justify-content:center;align-items:flex-start;z-index:10;visibility:hidden;}
+.nav.hidden{visibility:hidden;}
+.logo-img{height:140px;width:auto;display:block;cursor:none;transform:scale(1);
+  transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+  opacity:0;visibility:hidden;
+}
+.logo-wrap{position:relative;display:inline-block;}
+
+.logo-img:hover{transform:scale(1.18);}
+.pb{position:absolute;bottom:0;left:0;height:3px;background:#ff0000;z-index:10;width:7.6923%;transition:left 0.5s ease;}
+.dot{position:fixed;width:6px;height:6px;border-radius:50%;background:#f5f2ec;pointer-events:none;transform:translate(-50%,-50%);z-index:9999;opacity:0;transition:opacity 0.2s;}
+.lbl{position:fixed;pointer-events:none;z-index:9999;font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:#f5f2ec;transform:translate(-50%,11px);white-space:nowrap;opacity:0;transition:opacity 0.2s;}
+
+/* ── VISIONNEUSE ── */
+.viewer{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(17px);
+  -webkit-backdrop-filter:blur(17px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.4s ease;
+  cursor:none;
+}
+.viewer.open{opacity:1;pointer-events:auto;}
+
+/* Grain */
+.viewer-grain{
+  display:none;
+}
+@keyframes grain{
+  0%{background-position:0 0;}10%{background-position:-5% -10%;}20%{background-position:-15% 5%;}
+  30%{background-position:7% -25%;}40%{background-position:-5% 25%;}50%{background-position:-15% 10%;}
+  60%{background-position:15% 0%;}70%{background-position:0% 15%;}80%{background-position:3% 35%;}
+  90%{background-position:-10% 10%;}100%{background-position:0 0;}
+}
+
+/* Conteneur images */
+.viewer-imgs{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;}
+.viewer-img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:none;}
+.viewer-img.active{opacity:1;}
+.viewer-img img{width:min(88vw, calc(88vh * var(--gallery-ratio)));height:min(88vh, calc(88vw / var(--gallery-ratio)));max-width:100vw;max-height:100vh;display:block;object-fit:var(--gallery-fit,contain);pointer-events:none;}
+
+/* Barre haut */
+.viewer-topbar{
+  position:absolute;top:0;left:0;right:0;
+  padding:1.6rem 2.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:10;
+}
+
+
+
+
+/* Curseur custom */
+.vcursor{
+  position:fixed;pointer-events:none;z-index:400;
+  width:6px;height:6px;border-radius:50%;background:#f5f2ec;
+  opacity:0;transition:opacity 0.2s;
+  transform:translate(-50%,-50%);
+}
+
+
+/* Canvas grain analogique */
+#grain-canvas{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  width:100vw;height:100vh;
+  mix-blend-mode:soft-light;
+  opacity:0.85;
+}
+
+/* ── EFFET CATHODIQUE ── */
+.viewer-imgs{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;}
+
+
+
+/* Filtre sur les images (desactive) */
+.viewer-img img{
+  filter:none;
+}
+
+/* Vignette cathodique */
+.viewer-vignette{
+  display:none;
+}
+
+/* Légère aberration chromatique via text-shadow simulée en box */
+@keyframes crt-flicker{
+  0%,100%{opacity:1;}
+  92%{opacity:1;}
+  93%{opacity:0.94;}
+  94%{opacity:1;}
+  97%{opacity:0.96;}
+  98%{opacity:1;}
+}
+.viewer-img.active img{
+  animation:none;
+}
+
+/* ── PAGE INFO ── */
+.info-page{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  opacity:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:none;
+}
+.info-page.open{opacity:1;pointer-events:auto;transition:opacity 0.5s ease;}
+
+.info-inner{
+  position:relative;
+  width:100%;max-width:720px;
+  padding:0 3rem;
+  color:#f5f2ec;
+}
+
+
+
+.info-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,5vw,4rem);
+  font-weight:300;font-style:italic;
+  color:#f5f2ec;
+  margin-bottom:2.5rem;
+  line-height:1.1;
+}
+
+.info-bio{
+  font-size:0.86rem;line-height:1.9;
+  color:#ffffff;
+  font-family:'AmericanaStd', serif;
+  font-weight:bold;
+  margin-bottom:3rem;
+  max-width:100%;
+  text-align:center;
+}
+
+
+
+
+
+
+@font-face {
+  font-family: 'AmericanaStd';
+  src: url('assets/logos/font-americana.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* ── BANDEAU DÉFILANT ── */
+.info-ticker{
+  position:relative;
+  overflow:hidden;
+  padding:1.2rem 0;
+  margin-top:2rem;
+  border-top:0.5px solid rgba(245,242,236,0.15);
+  left:auto;right:auto;bottom:auto;
+  width:100%;
+}
+.ticker-track{
+  display:flex;
+  gap:0;
+  white-space:nowrap;
+  width:max-content;
+  will-change:transform;
+  animation: ticker-scroll 35s linear infinite;
+}
+@keyframes ticker-scroll{
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+  100% { transform: translateX(-50%); }
+}
+
+
+  100%{transform:translateX(-50%);}
+}
+.ticker-item{
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+}
+
+/* ── HOME PAGE ── */
+.home-page{
+  position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,0.2);
+  backdrop-filter:blur(40px);
+  -webkit-backdrop-filter:blur(40px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:default;
+  transition:opacity 0.8s ease;
+}
+.home-page.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+.home-logo{
+  height:200px;width:auto;
+  display:block;
+  cursor:pointer !important;
+  transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+}50%{opacity:0.8;}}
+
+#home-grain{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  width:100%;height:100%;
+  mix-blend-mode:soft-light;
+  opacity:0.85;
+}
+
+@keyframes logo-pulse{
+  0%,100%{transform:scale(1); opacity:1;}
+  50%{transform:scale(1.04); opacity:0.85;}
+}
+
+  100%{transform:scale(0.12) translate(0,-300px); opacity:0;}
+}
+.home-logo{
+  animation:logo-pulse 3s ease-in-out infinite;
+}
+
+
+#info-grain{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  width:100%;height:100%;
+  mix-blend-mode:soft-light;
+  opacity:0.85;
+}
+
+@media (hover:none) and (pointer:coarse) {
+  .slide:not(.active) .lbl-wrap,
+  .slide:not(.active) #lbl { opacity:0!important; }
+  #lbl { transition:none!important; }
+}
+
+
+@media (hover:none) and (pointer:coarse) {
+  
+}
+
+
+</style>
+<style id="fwd-blocking">
+html:not(.fwd-ready) .stage,
+html:not(.fwd-ready) #grain-canvas,
+html:not(.fwd-ready) #pb,
+html:not(.fwd-ready) .dot,
+html:not(.fwd-ready) #lbl {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+@media (hover:none) and (pointer:coarse) {
+  .slide:not(.active) .lbl-wrap,
+  .slide:not(.active) #lbl { opacity:0!important; }
+  #lbl { transition:none!important; }
+}
+
+
+@media (hover:none) and (pointer:coarse) {
+  
+}
+
+
+</style>
+</head>
+<body bgcolor="#0e0e0c" style="background:#0e0e0c;margin:0;padding:0;">
+<script>
+if('ontouchstart' in window && window.innerWidth <= 1366){
+  window.location.href = 'mobile.html';
+}
+</script>
+
+
+<!-- PORTFOLIO -->
+<div class="stage" id="stage">
+<canvas id="grain-canvas"></canvas>
+  <div class="nav" id="main-nav"><div class="logo-wrap"><img class="logo-img" src="assets/logos/nav-logo.png" alt="Logo"></div></div>
+  
+  <div class="slide" data-index="0" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-0.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Chopard</h2></div>
+  </div>
+  <div class="slide" data-index="1" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-1.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Dior</h2></div>
+  </div>
+  <div class="slide" data-index="2" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-2.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Clement Pascal for Calvin Klein</h2></div>
+  </div>
+  <div class="slide" data-index="3" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-3.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Augustinus Bader</h2></div>
+  </div>
+  <div class="slide" data-index="4" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-4.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Mathieu Maury for Laylow</h2></div>
+  </div>
+  <div class="slide" data-index="5" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-5.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Homer</h2></div>
+  </div>
+  <div class="slide active" data-index="6" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-6.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">David Luraschi for Jacquemus</h2></div>
+  </div>
+  <div class="slide" data-index="7" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-7.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Guerlain</h2></div>
+  </div>
+  <div class="slide" data-index="8" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-8.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Narcisse</h2></div>
+  </div>
+  <div class="slide" data-index="9" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-9.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Audrey Corregan for M le Monde</h2></div>
+  </div>
+  <div class="slide" data-index="10" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-10.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Louis Vuitton</h2></div>
+  </div>
+  <div class="slide" data-index="11" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-11.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Renault</h2></div>
+  </div>
+  <div class="slide" data-index="12" data-has-gallery="true">
+    <div class="slide-img" style="background-image:url('assets/covers/cover-12.jpeg')"></div>
+    <div class="overlay"></div>
+    <div class="footer"><h2 class="slide-title">Maxime Guyon for Omega</h2></div>
+  </div>
+  <div class="pb" id="pb"></div>
+  <div class="dot" id="dot"></div>
+  <div class="lbl" id="lbl"></div>
+</div>
+<canvas id="home-grain" style="position:fixed;inset:0;z-index:601;pointer-events:none;width:100vw;height:100vh;mix-blend-mode:soft-light;opacity:0.85;"></canvas>
+
+<!-- VISIONNEUSE -->
+<div class="viewer" id="viewer">
+  <div class="viewer-grain"></div>
+  <div class="viewer-imgs" id="viewer-imgs"></div>
+  <div class="viewer-vignette"></div>
+</div>
+<div class="vcursor" id="vcursor"></div>
+
+<script>
+const galleries = {
+  0: [
+    "assets/galleries/g0-0.jpeg",
+    "assets/galleries/g0-1.jpeg",
+    "assets/galleries/g0-2.jpeg",
+    "assets/galleries/g0-3.jpeg",
+    "assets/galleries/g0-4.jpeg",
+    "assets/galleries/g0-5.jpeg"
+  
+  ],
+  9: [
+    "assets/galleries/g9-0.jpeg",
+    "assets/galleries/g9-1.jpeg",
+    "assets/galleries/g9-2.jpeg",
+    "assets/galleries/g9-3.jpeg",
+    "assets/galleries/g9-4.jpeg"
+  
+  ],
+  1: [
+    "assets/galleries/g1-0.jpeg",
+    "assets/galleries/g1-1.jpeg",
+    "assets/galleries/g1-2.jpeg",
+    "assets/galleries/g1-3.jpeg"
+  
+  ],
+  3: [
+    "assets/galleries/g3-0.jpeg",
+    "assets/galleries/g3-1.jpeg",
+    "assets/galleries/g3-2.jpeg",
+    "assets/galleries/g3-3.jpeg",
+    "assets/galleries/g3-4.jpeg",
+    "assets/galleries/g3-5.jpeg"
+  
+  ],
+  2: [
+    "assets/galleries/g2-0.jpeg",
+    "assets/galleries/g2-1.jpeg",
+    "assets/galleries/g2-2.jpeg",
+    "assets/galleries/g2-3.jpeg",
+    "assets/galleries/g2-4.jpeg",
+    "assets/galleries/g2-5.jpeg",
+    "assets/galleries/g2-6.jpeg",
+    "assets/galleries/g2-7.jpeg",
+    "assets/galleries/g2-8.jpeg",
+    "assets/galleries/g2-9.jpeg",
+    "assets/galleries/g2-10.jpeg"
+  
+  ],
+  4: [
+    "assets/galleries/g4-0.jpeg"
+  
+  ],
+  5: [
+    "assets/galleries/g5-0.jpeg",
+    "assets/galleries/g5-1.jpeg",
+    "assets/galleries/g5-2.jpeg",
+    "assets/galleries/g5-3.jpeg",
+    "assets/galleries/g5-4.jpeg",
+    "assets/galleries/g5-5.jpeg",
+    "assets/galleries/g5-6.jpeg",
+    "assets/galleries/g5-7.jpeg",
+    "assets/galleries/g5-8.jpeg",
+    "assets/galleries/g5-9.jpeg"
+  
+  ],
+  6: [
+    "assets/galleries/g6-0.jpeg",
+    "assets/galleries/g6-1.jpeg",
+    "assets/galleries/g6-2.jpeg",
+    "assets/galleries/g6-3.jpeg"
+  
+  
+  ],
+  7: [
+    "assets/galleries/g7-0.jpeg",
+    "assets/galleries/g7-1.jpeg",
+    "assets/galleries/g7-2.jpeg",
+    "assets/galleries/g7-3.jpeg",
+    "assets/galleries/g7-4.jpeg",
+    "assets/galleries/g7-5.jpeg"
+  
+  ],
+  8: [
+    "assets/galleries/g8-0.jpeg",
+    "assets/galleries/g8-1.jpeg",
+    "assets/galleries/g8-2.jpeg",
+    "assets/galleries/g8-3.jpeg",
+    "assets/galleries/g8-4.jpeg",
+    "assets/galleries/g8-5.jpeg",
+    "assets/galleries/g8-6.jpeg",
+    "assets/galleries/g8-7.jpeg"
+  
+  ],
+  10: [
+    "assets/galleries/g10-0.jpeg",
+    "assets/galleries/g10-1.jpeg",
+    "assets/galleries/g10-2.jpeg",
+    "assets/galleries/g10-3.jpeg",
+    "assets/galleries/g10-4.jpeg",
+    "assets/galleries/g10-5.jpeg",
+    "assets/galleries/g10-6.jpeg"
+  
+  ],
+  11: [
+    "assets/galleries/g11-0.jpeg",
+    "assets/galleries/g11-1.jpeg",
+    "assets/galleries/g11-2.jpeg",
+    "assets/galleries/g11-3.jpeg",
+    "assets/galleries/g11-4.jpeg",
+    "assets/galleries/g11-5.jpeg"
+  
+  ],
+  12: [
+    "assets/galleries/g12-0.jpeg",
+    "assets/galleries/g12-1.jpeg",
+    "assets/galleries/g12-2.jpeg",
+    "assets/galleries/g12-3.jpeg",
+    "assets/galleries/g12-4.jpeg",
+    "assets/galleries/g12-5.jpeg"
+  
+  ]
+};
+
+// ── PORTFOLIO ──
+const stage = document.getElementById('stage');
+const slides = document.querySelectorAll('.slide');
+const pb = document.getElementById('pb');
+const dot = document.getElementById('dot');
+const lbl = document.getElementById('lbl');
+const N = slides.length;
+let cur = 6, pRaf = null, viewerOpen = false;
+
+function portfolioGoTo(idx) {
+  if (idx === cur || idx < 0 || idx >= N) return;
+  slides[cur].classList.remove('active');
+  cur = idx;
+  slides[cur].classList.add('active');
+  pb.style.left = (cur / N * 100) + '%';
+  randomLogoColor();
+}
+
+// Dot follows mouse everywhere
+document.addEventListener('mousemove', e => {
+  dot.style.left = e.clientX + 'px';
+  dot.style.top = e.clientY + 'px';
+  dot.style.opacity = '1';
+});
+document.addEventListener('mouseleave', () => dot.style.opacity = '0');
+
+stage.addEventListener('mousemove', e => {
+  if('ontouchstart' in window) return;
+  if (viewerOpen) return;
+  const r = stage.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  lbl.style.left = e.clientX + 'px'; lbl.style.top = e.clientY + 'px';
+  const w = stage.offsetWidth;
+  lbl.style.opacity = '0';
+  if (pRaf) cancelAnimationFrame(pRaf);
+  pRaf = requestAnimationFrame(() => portfolioGoTo(Math.min(N - 1, Math.floor(x / (w / N)))));
+});
+
+stage.addEventListener('mouseleave', () => { dot.style.opacity = '0'; lbl.style.opacity = '0'; });
+pb.style.left = (6/N*100)+'%';
+
+stage.addEventListener('click', () => {
+  if (slides[cur].dataset.hasGallery === 'true') {
+    openViewer(cur, slides[cur].querySelector('.slide-title').textContent);
+  }
+});
+
+// ── VISIONNEUSE ──
+const viewer = document.getElementById('viewer');
+const vImgsEl = document.getElementById('viewer-imgs');
+
+const vcursor = document.getElementById('vcursor');
+let gCur = 0, gImages = [], vRaf = null;
+
+const galleryRatios = { 4: 1 };            // 4 = Laylow (cover carree)
+const galleryFits   = { 2: 'cover' }; // 2 = Calvin Klein
+function openViewer(idx, title) {
+  gImages = galleries[idx];
+  gCur = 0;
+  viewer.style.setProperty('--gallery-ratio', galleryRatios[idx] || 0.8);
+  viewer.style.setProperty('--gallery-fit', galleryFits[idx] || 'contain');
+  vImgsEl.innerHTML = '';
+  gImages.forEach((src, i) => {
+    const d = document.createElement('div');
+    d.className = 'viewer-img' + (i === 0 ? ' active' : '');
+    const im = document.createElement('img');
+    im.src = src;
+    im.draggable = false;
+    d.appendChild(im);
+    vImgsEl.appendChild(d);
+  });
+  viewer.classList.add('open');
+  viewerOpen = true;
+}
+
+function closeViewer() {
+  viewer.classList.remove('open');
+  viewerOpen = false;
+  vcursor.style.opacity = '0';
+}
+
+function vGoTo(idx) {
+  const total = gImages.length;
+  idx = ((idx % total) + total) % total;
+  if (idx === gCur) return;
+  vImgsEl.children[gCur].classList.remove('active');
+  gCur = idx;
+  vImgsEl.children[gCur].classList.add('active');
+}
+
+// Navigation par position du curseur — même logique que le portfolio
+viewer.addEventListener('mousemove', e => {
+  vcursor.style.left = e.clientX + 'px';
+  vcursor.style.top = e.clientY + 'px';
+  vcursor.style.opacity = '1';
+  const activeImg = viewer.querySelector('.viewer-img.active img');
+  const r = activeImg ? activeImg.getBoundingClientRect() : viewer.getBoundingClientRect();
+  const x = e.clientX - r.left, w = r.width;
+  // Only navigate if cursor is within the image bounds
+  if (x < 0 || x > w) return;
+  if (vRaf) cancelAnimationFrame(vRaf);
+  vRaf = requestAnimationFrame(() => {
+    const total = gImages.length;
+    const target = Math.min(total - 1, Math.floor((x / w) * total));
+    vGoTo(target);
+  });
+});
+
+viewer.addEventListener('mouseleave', () => {});
+
+viewer.addEventListener('click', e => {
+  if('ontouchstart' in window) return;
+  // Close only if clicking outside the image
+  const img = e.target.closest('img');
+  if (!img) closeViewer();
+});
+
+
+
+document.addEventListener('keydown', e => {
+  if (!viewerOpen) return;
+  if (e.key === 'ArrowLeft') vGoTo(gCur - 1);
+  if (e.key === 'ArrowRight') vGoTo(gCur + 1);
+  if (e.key === 'Escape') closeViewer();
+});
+
+// ── GRAIN ANALOGIQUE ──
+(function(){
+  const canvas = document.getElementById('grain-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, animId;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function drawGrain(){
+    const imageData = ctx.createImageData(w, h);
+    const data = imageData.data;
+    const len = data.length;
+
+    for(let i = 0; i < len; i += 4){
+      // Grain analogique : distribution non uniforme, plus de gros grains
+      let v = 0;
+      // Somme de plusieurs couches aléatoires pour effet pellicule
+      v = (Math.random() * 255) | 0;
+      // Ajout de clusters occasionnels (gros grain)
+      if(Math.random() < 0.015){
+        v = Math.min(255, v + (Math.random() * 180 | 0));
+      }
+      // Légère teinte chaude/froide aléatoire
+      const warm = (Math.random() - 0.5) * 18;
+      data[i]     = Math.min(255, Math.max(0, v + warm));   // R
+      data[i + 1] = Math.min(255, Math.max(0, v));           // G
+      data[i + 2] = Math.min(255, Math.max(0, v - warm));   // B
+      data[i + 3] = Math.random() < 0.55 ? (Math.random() * 80 | 0) : 0; // Alpha sparse
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    animId = requestAnimationFrame(drawGrain);
+  }
+
+  drawGrain();
+})();
+
+
+// ── COULEUR LOGO ALÉATOIRE AU CHANGEMENT DE SLIDE ──
+const logoImg = document.querySelector('.logo-img');
+const colors = [
+  'brightness(1) sepia(0) saturate(1)',                                          // blanc
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(0deg)',                       // rouge
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(30deg)',                      // orange
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(60deg)',                      // jaune
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(90deg)',                      // vert jaune
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(140deg)',                     // vert
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(180deg)',                     // cyan
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(210deg)',                     // bleu clair
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(240deg)',                     // bleu
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(270deg)',                     // violet
+  'brightness(0.9) sepia(1) saturate(4) hue-rotate(310deg)',                     // rose
+];
+let lastIdx = 0;
+
+const pbColors = ['#00aaeb','#f04fdd','#efd500','#ea5800','#00962f','#6900d6','#cf0000','#d5d6d9'];
+let lastPbColor = '#ff0000';
+
+function randomLogoColor() {
+  let idx;
+  do { idx = Math.floor(Math.random() * colors.length); } while (idx === lastIdx);
+  lastIdx = idx;
+  // Logo color preserved from home — only change pb color
+  let pbColor;
+  do { pbColor = pbColors[Math.floor(Math.random() * pbColors.length)]; } while (pbColor === lastPbColor);
+  lastPbColor = pbColor;
+  pb.style.background = pbColor;
+}
+
+</script>
+
+<div class="info-page" id="info-page">
+<canvas id="info-grain"></canvas>
+  <div class="info-inner">    <img id="info-logo-img" src="assets/logos/nav-logo.png" alt="Forward" style="height:80px;width:auto;display:block;margin:0 auto 2rem;transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);cursor:none;" onmouseover="this.style.transform='scale(1.18)'" onmouseout="this.style.transform='scale(1)'" onclick="document.getElementById('info-page').classList.remove('open');document.querySelector('.logo-img').style.opacity='1';">
+    <p class="info-bio">
+FORWARD is a production, post production and consulting studio<br>dedicated to the fashion, beauty and luxury industries.<br>We collaborate on high end editorials and international campaigns.
+    </p>
+        <div style="text-align:center;margin-top:2.5rem;display:flex;justify-content:center;gap:1.5rem;align-items:center;">
+      <a href="https://www.instagram.com/studiofwd_com" target="_blank" style="display:inline-block;line-height:0;cursor:none;transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);" onmouseover="this.style.transform='scale(1.18)'" onmouseout="this.style.transform='scale(1)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="#ffffff" stroke="none"/>
+        </svg>
+      </a>
+      <a href="mailto:contact@studiofwd.com" style="display:inline-block;line-height:0;cursor:none;transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);" onmouseover="this.style.transform='scale(1.18)'" onmouseout="this.style.transform='scale(1)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <polyline points="2,4 12,13 22,4"/>
+        </svg>
+      </a>
+    </div>
+<div class="info-ticker">
+  <div class="ticker-track"><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-0.png" alt="LV" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-1.png" alt="Prada" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-2.png" alt="Cartier" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-3.png" alt="Mercedes" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-4.png" alt="Apple" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-5.png" alt="Guerlain" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-6.png" alt="Lancome" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-7.png" alt="Chanel" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-8.png" alt="Balenciaga" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-9.png" alt="Vanity_Fair" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-10.png" alt="AP" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-11.png" alt="Homer" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-12.png" alt="Jordan" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-13.png" alt="CK" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-14.png" alt="Chopard" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-15.png" alt="Dior" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-16.png" alt="Hermes" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-0.png" alt="LV" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-1.png" alt="Prada" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-2.png" alt="Cartier" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-3.png" alt="Mercedes" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-4.png" alt="Apple" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-5.png" alt="Guerlain" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-6.png" alt="Lancome" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-7.png" alt="Chanel" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-8.png" alt="Balenciaga" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-9.png" alt="Vanity_Fair" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-10.png" alt="AP" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-11.png" alt="Homer" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-12.png" alt="Jordan" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-13.png" alt="CK" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-14.png" alt="Chopard" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-15.png" alt="Dior" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span><span class="ticker-item" style="display:inline-flex;align-items:center;margin-right:3rem;"><img src="assets/logos/client-logo-16.png" alt="Hermes" style="height:24px;width:auto;opacity:0.5;transform:translateZ(0);" /></span></div>
+</div>
+  
+  <p style="text-align:center;font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,242,236,0.25);margin-top:2rem;font-family:'AmericanaStd',serif;font-weight:bold;">© Forward 2026</p>
+</div>
+</div>
+
+<script>
+// ── PAGE INFO ──
+const infoPage = document.getElementById('info-page');
+const navLogoInfo = document.querySelector('.logo-img');
+
+function openInfo() {
+  if (typeof closeViewer === 'function') closeViewer();
+  infoPage.classList.add('open');
+  if(navLogoInfo) navLogoInfo.style.opacity = '0';
+  var _il = document.getElementById('info-logo-img');
+  if(_il && navLogoInfo) _il.src = navLogoInfo.src;
+}
+function closeInfo() {
+  infoPage.classList.remove('open');
+  if(navLogoInfo) navLogoInfo.style.opacity = '1';
+}
+
+navLogoInfo.addEventListener('click', (e) => {
+  e.stopPropagation();
+  infoPage.classList.contains('open') ? closeInfo() : openInfo();
+});
+
+infoPage.addEventListener('click', e => {
+  if (e.target === infoPage) closeInfo();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeInfo();
+});
+</script>
+
+<div class="home-page" id="home-page">
+  <img class="home-logo" src="assets/logos/nav-logo.png" alt="Forward" id="home-logo">
+  </div>
+
+<script>
+// ── HOME PAGE ──
+(function(){
+  var hp = document.getElementById('home-page');
+  var hl = document.querySelector('.home-logo');
+  if(!hp) return;
+
+  // Random colored logo
+  var coloredLogos = [
+  "assets/logos/home-logo-color-0.png",
+  "assets/logos/home-logo-color-1.png",
+  "assets/logos/home-logo-color-2.png",
+  "assets/logos/home-logo-color-3.png",
+  "assets/logos/home-logo-color-4.png",
+  "assets/logos/home-logo-color-5.png",
+  "assets/logos/home-logo-color-6.png"
+  ];
+  var chosenLogo = coloredLogos[Math.floor(Math.random() * coloredLogos.length)];
+  window._fwdChosenLogo = chosenLogo;
+  if(hl) hl.src = chosenLogo;
+  var infoLogoEl = document.getElementById('info-logo-img'); if(infoLogoEl) infoLogoEl.src = chosenLogo;
+  // Apply to nav logo and hide it until home dismisses
+  var navLogo = document.querySelector('.logo-img');
+  var mainNav = document.getElementById('main-nav');
+  if(navLogo) { navLogo.src = chosenLogo; navLogo.style.opacity = '0'; }
+  var infoLogoImg = document.getElementById('info-logo-img'); if(infoLogoImg) infoLogoImg.src = chosenLogo;
+  if(mainNav) mainNav.style.visibility = 'hidden';
+
+  hp.style.cursor = 'pointer';
+  hp.addEventListener('click', function() {
+    if(!hl) {
+      hp.style.opacity = '0';
+      hp.style.transition = 'opacity 0.8s ease';
+      setTimeout(function(){ hp.style.display = 'none'; }, 800);
+      return;
+    }
+
+    // v65 animation: gravity drop → compress → jump + spin → fly to nav
+    var navLogo = document.querySelector('.logo-img');
+    var toRect = navLogo ? navLogo.getBoundingClientRect() : null;
+    var fromRect = hl.getBoundingClientRect();
+
+    var tx = toRect ? (toRect.left + toRect.width/2) - (fromRect.left + fromRect.width/2) : 0;
+    var ty = toRect ? (toRect.top + toRect.height/2) - (fromRect.top + fromRect.height/2) : -300;
+    var scale = toRect ? toRect.width / fromRect.width : 0.15;
+
+    hl.style.animation = 'none';
+
+    var anim = hl.animate([
+      { transform: 'translate(0,0) scale(1)',            opacity: 1, offset: 0    },
+      { transform: 'translate(0,50px) scale(1.04,0.96)', opacity: 1, offset: 0.18 },
+      { transform: 'translate(0,55px) scale(1.08,0.92)', opacity: 1, offset: 0.22 },
+      { transform: 'translate(0,20px) scale(1)',         opacity: 1, offset: 0.30 },
+      { transform: 'translate(0,-80px) scale(1)',        opacity: 1, offset: 0.50 },
+      { transform: 'translate(0,-140px) scale(1.04)',    opacity: 1, offset: 0.62 },
+      { transform: 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')', opacity: 1, offset: 1 }
+    ], {
+      duration: 1100,
+      easing: 'cubic-bezier(0.22,1,0.36,1)',
+      fill: 'forwards'
+    });
+
+    anim.onfinish = function() {
+      if(mainNav) { mainNav.style.visibility = 'visible'; mainNav.classList.remove('hidden'); }
+      if(navLogo) { navLogo.style.visibility = 'visible'; navLogo.style.opacity = '1'; navLogo.style.transition = 'none'; mainNav.offsetHeight; }
+      hp.style.display = 'none';
+      setTimeout(function(){ if(navLogo) navLogo.style.transition = 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)'; }, 50);
+    };
+  });
+})();
+</script>
+<script>
+// ── GRAIN HOME ──
+(function(){
+  const canvas = document.getElementById('home-grain');
+  const ctx = canvas.getContext('2d');
+  let running = true;
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let _grainFrame = 0;
+  function draw(){
+    if(!running) return;
+    _grainFrame++;
+    if(_grainFrame % 6 !== 0){ requestAnimationFrame(draw); return; }
+    const w = canvas.width, h = canvas.height;
+    const imageData = ctx.createImageData(w, h);
+    const data = imageData.data;
+    const len = data.length;
+    for(let i = 0; i < len; i += 4){
+      // 16mm grain : particules rares, douces, légèrement chaudes
+      if(Math.random() > 0.32){ // 68% transparent
+        data[i+3] = 0;
+        continue;
+      }
+      const g = ((Math.random() + Math.random() + Math.random()) / 3);
+      let v = (g * 160) | 0;
+      if(Math.random() < 0.008){ v = Math.min(255, v + 80); } // rares gros grains
+      const warm = (Math.random() - 0.45) * 14;
+      data[i]     = Math.min(255, Math.max(0, v + warm + 6));
+      data[i + 1] = Math.min(255, Math.max(0, v + 3));
+      data[i + 2] = Math.min(255, Math.max(0, v - warm));
+      data[i + 3] = (Math.random() * 45 + 8) | 0; // alpha 8-53
+    }
+    ctx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Stop when home page is dismissed
+  document.getElementById('home-logo').addEventListener('click', () => {
+    running = false;
+  });
+})();
+</script>
+
+<script>
+</script>
+
+
+<script>
+(function(){
+  var canvas = document.getElementById('info-grain');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var running = false;
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw(){
+    if(!running) return;
+    var w = canvas.width, h = canvas.height;
+    var imageData = ctx.createImageData(w, h);
+    var data = imageData.data;
+    var len = data.length;
+    for(var i = 0; i < len; i += 4){
+      if(Math.random() > 0.32){ data[i+3]=0; continue; }
+      var g = (Math.random()+Math.random()+Math.random())/3;
+      var v = (g*160)|0;
+      if(Math.random()<0.008){ v=Math.min(255,v+80); }
+      var warm=(Math.random()-0.45)*14;
+      data[i]   =Math.min(255,Math.max(0,v+warm+6));
+      data[i+1] =Math.min(255,Math.max(0,v+3));
+      data[i+2] =Math.min(255,Math.max(0,v-warm));
+      data[i+3] =(Math.random()*45+8)|0;
+    }
+    ctx.putImageData(imageData,0,0);
+    requestAnimationFrame(draw);
+  }
+
+  // Watch info page open/close
+  var observer = new MutationObserver(function(){
+    var open = document.getElementById('info-page').classList.contains('open');
+    if(open && !running){ running=true; resize(); draw(); }
+    else if(!open){ running=false; }
+  });
+  observer.observe(document.getElementById('info-page'), {attributes:true, attributeFilter:['class']});
+})();
+</script>
+
+<script>
+// Mark page as ready — removes blocking CSS
+document.documentElement.classList.add('fwd-ready');
+</script>
+
+<style>
+@media (hover:none) and (pointer:coarse) {
+  /* Reset cursor */
+  *, *:hover { cursor:default!important; }
+  .home-logo, .logo-img, .info-inner img { cursor:pointer!important; }
+  #dot { display:none!important; }
+
+  /* Scale everything to fit viewport */
+  html { font-size: 14px; }
+
+  /* Nav */
+  .nav { top:12px!important; }
+  .logo-img {
+    height:80px!important;
+    width:auto!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+
+  /* Home */
+  .home-logo { height:110px!important; }
+
+  /* Progress bar */
+  .pb {
+    height:3px!important;
+    bottom:0!important;
+    z-index:20!important;
+    display:block!important;
+    opacity:1!important;
+  }
+
+  /* Labels */
+  .lbl {
+  will-change:auto;
+    bottom:12px!important;
+    left:12px!important;
+    right:60px!important;
+    max-width:none!important;
+  }
+  .slide-title {
+    font-size:0.85rem!important;
+    white-space:normal!important;
+    word-break:break-word!important;
+  }
+  .slide-cat, .slide-year {
+    font-size:0.48rem!important;
+    letter-spacing:0.15em!important;
+  }
+
+  /* Slides fill screen properly */
+  .stage, .slide {
+    width:100vw!important;
+    height:100dvh!important;
+  }
+  .slide {
+    background-size:cover!important;
+    background-position:center!important;
+  }
+
+  /* Info page */
+  .info-page {
+    overflow-y:scroll!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .info-inner {
+    padding:80px 1.2rem 2rem!important;
+    max-width:100vw!important;
+    min-height:auto!important;
+    overflow-y:visible!important;
+  }
+  .info-bio {
+    font-size:0.65rem!important;
+    line-height:1.8!important;
+  }
+
+  /* Viewer */
+  .viewer-img {
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .viewer-img img {
+    width:min(88vw, calc(88dvh * var(--gallery-ratio)))!important;
+    height:min(88dvh, calc(88vw / var(--gallery-ratio)))!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    object-fit:var(--gallery-fit,contain)!important;
+  }
+}
+
+@media (hover:none) and (pointer:coarse) {
+  .slide:not(.active) .lbl-wrap,
+  .slide:not(.active) #lbl { opacity:0!important; }
+  #lbl { transition:none!important; }
+}
+
+
+@media (hover:none) and (pointer:coarse) {
+  
+}
+
+
+</style>
+<script>
+(function(){
+  if(!('ontouchstart' in window)) return;
+  // Show viewer close button on touch
+  var closeBtn = document.getElementById('viewer-close-btn');
+  if(closeBtn) closeBtn.style.display = 'flex';
+
+  var touchSX=0, touchSY=0, touchT=0;
+  var dragging=false, dragOffset=0;
+  var SWIPE_THRESHOLD = 60;
+
+  // Portfolio drag/slide navigation
+  var stage = document.getElementById('stage');
+  if(stage){
+    stage.addEventListener('touchstart', function(e){
+      touchSX = e.touches[0].clientX;
+      touchSY = e.touches[0].clientY;
+      touchT = Date.now();
+      dragging = true;
+      dragOffset = 0;
+    }, {passive:true});
+
+    stage.addEventListener('touchmove', function(e){
+      if(!dragging) return;
+      var dx = e.touches[0].clientX - touchSX;
+      var dy = e.touches[0].clientY - touchSY;
+      if(Math.abs(dy) > Math.abs(dx)*0.8){ dragging=false; return; }
+      e.preventDefault();
+      dragOffset = dx;
+      // Visual drag feedback
+      var activeSlide = document.querySelector('.slide.active');
+      if(activeSlide) activeSlide.style.transform = 'translateX('+dx*0.3+'px)';
+    }, {passive:false});
+
+    stage.addEventListener('touchend', function(e){
+      if(!dragging) return;
+      dragging = false;
+      // Reset visual
+      var activeSlide = document.querySelector('.slide.active');
+      if(activeSlide) activeSlide.style.transform = '';
+
+      var dx = e.changedTouches[0].clientX - touchSX;
+      var dy = e.changedTouches[0].clientY - touchSY;
+      if(Math.abs(dy) > Math.abs(dx)*0.8) return;
+      if(Math.abs(dx) < SWIPE_THRESHOLD) return;
+      e.preventDefault();
+      if(typeof portfolioGoTo === 'function'){
+        portfolioGoTo(dx < 0 ? cur+1 : cur-1);
+      }
+    }, {passive:false});
+
+    // Tap to open gallery — only if no swipe detected
+    var tapped = false;
+    stage.addEventListener('touchstart', function(){ tapped=true; }, {passive:true});
+    stage.addEventListener('touchend', function(e){
+      if(tapped){
+        var dx = Math.abs(e.changedTouches[0].clientX - touchSX);
+        if(dx < 10 && typeof cur!=='undefined' && galleries && galleries[cur] && galleries[cur].length>0){
+          if(typeof openViewer==='function') openViewer(cur, '');
+        }
+        tapped = false;
+      }
+    }, {passive:true});
+  }
+
+  // Viewer swipe
+  var viewer = document.getElementById('viewer');
+  if(viewer){
+    var vSX=0, vDragging=false;
+    viewer.addEventListener('touchstart', function(e){ vSX=e.touches[0].clientX; vDragging=true; },{passive:true});
+    viewer.addEventListener('touchmove', function(e){
+      if(!vDragging) return;
+      e.preventDefault();
+    },{passive:false});
+    viewer.addEventListener('touchend', function(e){
+      if(!vDragging) return;
+      vDragging=false;
+      var dx = e.changedTouches[0].clientX - vSX;
+      // Tap (no drag) = close viewer
+      if(Math.abs(dx) < 15){
+        viewer.classList.remove('open');
+        viewerOpen = false;
+        return;
+      }
+      // Drag = navigate
+      if(Math.abs(dx) < 30) return;
+      if(typeof vGoTo==='function'){
+        vGoTo(dx < 0 ? gCur+1 : gCur-1);
+      }
+      e.stopPropagation();
+    },{passive:false});
+  }
+})();
+</script>
+</body>
+</html>
